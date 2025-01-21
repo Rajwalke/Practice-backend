@@ -1,68 +1,78 @@
 const express=require("express");
 
 const app=express();
+const {connectDB}=require("./config/database");
+const employeInfo=require("./models/employeSchema");
+const {validation}=require("./utils/validation")
+// app.get("/",(req,res)=>{
+//     res.send("Server is started");
+// })
+connectDB().then(()=>{
+    console.log("DB is connected")
+    app.listen(7777,()=>{
+        console.log("Server is started");
+    })
 
-const {connectDB}=require("./config/databse");
-const StudentInfo=require("./model/student");
+}).catch((err)=>{
+    console.log("DB is not connected"+err.message);
+})
 
+app.get("/",(req,res)=>{
+    res.send("Sever is started from localHost 7777");
+})
 app.use(express.json());
 
-app.post("/studetsignup",async (req,res)=>{
-    const datainfo=req.body;
-    console.log(datainfo);
-    const info=new StudentInfo(datainfo);
-
-    try{
-        await info.save();
-        res.send("Data is added into databse");
-    }
-    catch(err){
-        console.log("data is not added");
-    }
-
-})
-
-app.get("/alldata",async(req,res)=>{
-    // const studentfirstName=req.body.firstName;
-    const studentId=req.body._id;
-    // console.log(`studentId is ${studentId} and name is ${studentfirstName}`)
-    try{
-        // const studentData= await StudentInfo.find({firstName:studentfirstName});
-       const studentData=await StudentInfo.find({_id:studentId});
-        res.send(studentData);
-    }catch(err){
-        res.status(404).send("Someting went Wrong");
-    }
-
-})
-
-// app.patch("/student",async(req,res)=>{
-//     const userId=req.body._id;
-//     const data=req.body;
-//     try{
-//         const updatedata= await StudentInfo.findByIdAndUpdate({_id:userId},data);
-//         res.send(updatedata);
-//     }catch(err){
-//         res.status(404).send("Something went wrong",err);
-//     }
-// })
-app.patch("/student",async(req,res)=>{
-    const userFirstName=req.body.firstName;
+app.post("/signup",async(req,res)=>{
     const data=req.body;
+   
+    // console.log(data);
+    
     try{
-        // const dataUser=await StudentInfo.updateMany({firstName:userFirstName},data);
-        const dataUser=await StudentInfo.updateOne({firstName:userFirstName},data);
-        res.send(dataUser);
+        validation(data);
+        const employe=new employeInfo(data);
+        await employe.save();
+        res.send("Data is store");
     }catch(err){
-        res.status(404).send("somhting went wrong");
+        res.status(404).send("Error: "+err.message)
+    }
+    
+
+})
+
+app.get("/feed",async(req,res)=>{
+
+    try{
+        const allEmplyeData=await employeInfo.find({});
+        res.send(allEmplyeData);
+    }catch(err){
+        res.status(400).send("Error: "+ err.message);
     }
 })
 
-connectDB().then(()=>{
-    console.log("connected to DB");
-    app.listen(5555,(req,res)=>{
-        console.log("Server is created");
-    })
-}).catch((Error)=>{
-    console.log("not connect",Error);
+app.get("/user/:userID",async(req,res)=>{
+    const userID = req.params.userID;
+    try{
+    // const userData=await employeInfo.findOne({firstName:userfirstName})    
+    const userData=await employeInfo.findById(userID); 
+    res.send(userData);
+    }catch(err){
+        res.status(400).send("Error: "+ err.message);
+    }
+})
+
+app.patch("/user/:userID",async(req,res)=>{
+    const userID=req.params.userID;
+    const data=req.body;
+    const {age,gender,about}=data;
+    try{
+        Object.keys(data).every((key)=>{
+            if(!["age","gender","about"].includes(key)){
+                throw new Error(`You can't upadte ${key}`)
+            }
+        })
+        const user=await employeInfo.findByIdAndUpdate(userID,data,{returnDocument:"after",runValidators:true});
+        res.send(user);
+    }catch(err){
+        res.status(400).send("Error: "+ err.message);
+    }
 })
