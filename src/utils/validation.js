@@ -1,22 +1,26 @@
 const validator=require('validator');
-const validation=(data)=>{
-    const {firstName,lastName,email,password}=data;
-    if(!firstName || !lastName){
-        throw new Error("Enter correct name")
+const { EmployeInfo } = require('../model/employeInfo');
+const validationSignUp=(data)=>{
+    const {firstName,lastName,email,password,gender,age,skills,about}=data;
+    if(firstName.lenth<3 && firstName.length>20){
+        throw new Error("Lenght of name must in between 3-to-20");
     }
-    if(firstName.lenght<2 || lastName.lenght<2 || firstName.lenght>30 || lastName.lenght>30){
-        throw new Error("Enter correct name")
+    if(lastName.lenth<3 && lastName.length>20){
+        throw new Error("Length of LastName muist in between 3-to-20")
     }
     if(!validator.isEmail(email)){
-        throw new Error("Email is not valide");
-    }
-    if(password.lenght<8){
-        throw new Error("Password consist atleast 8 characters");
+        throw new Error("Please Enter valide EmailID");
     }
     if(!validator.isStrongPassword(password)){
-        throw new Error("Create Password with Atleast 1 capital,small,number & unique symbol");
+        throw new Error("Password must be contain 1 Capital,lower,number and unqiue symbol");
     }
+};
 
+const validateLoginEmailAndPassword=async(data)=>{
+    const {email,password}=data;
+    if(!validator.isEmail(email)){
+        throw new Error("Please check the Email");
+    }
+    return true;
 }
-
-module.exports={validation};
+module.exports={validationSignUp,validateLoginEmailAndPassword};
