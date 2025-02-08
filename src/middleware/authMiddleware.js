@@ -18,5 +18,6 @@ const userAuth = async(req,res,next)=>{
     }catch(err){
         res.status(404).json({message: "Error : "+err.message});
     }
-}
+} 
+
 module.exports=userAuth;
