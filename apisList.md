@@ -1,5 +1,7 @@
 # List of all dev tinder apis in router
 
+## authentication middelware 
+
 ## AuthRouter
 - POST/Signup
 - POST/Login

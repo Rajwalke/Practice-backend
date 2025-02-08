@@ -2,27 +2,18 @@ const express=require('express');
 
 const app=express();
 const {connectDB}=require("./config/databse");
-const {EmployeInfo}=require("./model/employeInfo");
-// const {validationSignUp}=require('./utils/validation');
-// const bcrypt=require('bcrypt');
-const authRouter=require('./Routers/authRouter');
-const { profileRouter } = require('./Routers/profileRouter');
-const cookieParser=require('cookie-parser')
+const authRouter=require("./routes/authRoute");
+const profileRouter = require('./routes/profileRouter');
+const cookieparser=require('cookie-parser');
 app.use(express.json());
-app.use(cookieParser())
-// app.use(validator.)
+app.use(cookieparser());
 app.use("/",authRouter);
-app.use("/",profileRouter);
-
+app.use("/",profileRouter)
 connectDB().then(()=>{
-    console.log("Data base is connected");
+    console.log("Database is connected")
     app.listen(7777,()=>{
-        console.log("server is created");
+        console.log("Server is created")
     })
 }).catch((err)=>{
-    console.log("Databse is not connected");
+    console.log("data base is not created"+err.message);
 })
-
-// app.use("/",(req,res)=>{
-//     res.send("Hello my name is server")
-// })
