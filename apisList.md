@@ -3,12 +3,12 @@
 ## authentication middelware 
 
 ## AuthRouter
-- POST/Signup
-- POST/Login
-- POST/Logout
+- POST/Signup✅
+- POST/Login✅
+- POST/Logout✅
 
 ## ProfileRouter
-- GET/Profile/View 
+- GET/Profile/View ✅
 - PATCH/Profile/edit (Update some information)
 - PATCH/Profile/editPasssword
 

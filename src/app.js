@@ -4,11 +4,13 @@ const app=express();
 const {connectDB}=require("./config/databse");
 const authRouter=require("./routes/authRoute");
 const profileRouter = require('./routes/profileRouter');
+const connectinRequest=require('./routes/connectionRequest');
 const cookieparser=require('cookie-parser');
 app.use(express.json());
 app.use(cookieparser());
 app.use("/",authRouter);
-app.use("/",profileRouter)
+app.use("/",profileRouter);
+app.use("/",connectinRequest);
 connectDB().then(()=>{
     console.log("Database is connected")
     app.listen(7777,()=>{
