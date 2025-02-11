@@ -23,4 +23,11 @@ const isvalidateStatus=(status)=>{
     }
 }
 
-module.exports={validationUserSignupData,validationEditInfo,isvalidateStatus};
+const valideReviewStatus=(status)=>{
+    const ALLOWED_STAUS=["accepted","rejected"];
+    if(!ALLOWED_STAUS.includes(status)){
+        throw new Error(`${status} is Invalide Status`);
+    }
+}
+
+module.exports={validationUserSignupData,validationEditInfo,isvalidateStatus,valideReviewStatus};

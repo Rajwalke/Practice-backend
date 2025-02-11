@@ -2,7 +2,7 @@ const express=require('express');
 const connectinRequest=express.Router();
 const userAuth = require('../middleware/authMiddleware');
 const {ConnectionModel}=require("../model/connectionSchema");
-const { isvalidateStatus } = require('../utils/validation');
+const { isvalidateStatus, valideReviewStatus } = require('../utils/validation');
 const { Userdetails } = require('../model/userSchema');
 
 
@@ -44,4 +44,30 @@ connectinRequest.post("/request/send/:status/:toUserId",userAuth,async(req,res)=
     }
 })
 
+connectinRequest.post("/request/review/:status/:reqId",userAuth,async(req,res)=>{
+    const loggInUser=req.user;
+    const status=req.params.status;
+    const reqId=req.params.reqId;
+    try{
+        valideReviewStatus(status);
+        const requestConnection=await ConnectionModel.findOne({
+            $and:[
+                {toUserId:loggInUser?._id,status:"interested"},
+                {_id:reqId}
+            ]
+        }
+        ).populate("fromUserId","firstName lastName").populate("toUserId","firstName lastName");
+        if(!requestConnection){
+            throw new Error("RequestId Is Invalide or Connection not exist");
+        }
+        requestConnection.status=status;
+        requestConnection.save();
+        res.json({message:"All connection request",
+                requestConnection
+        })
+
+    }catch(err){
+        res.status(404).json({message: "Error : "+err.message});
+    }
+})
 module.exports=connectinRequest;
